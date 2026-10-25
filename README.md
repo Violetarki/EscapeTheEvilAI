@@ -32,3 +32,9 @@ Before coding, sketch the possible paths through your story. Test every ending a
 to a location does not incorrectly repeat rewards or reset earlier actions. Ask someone unfamiliar with
 your code to try the game without your help. Keep the adventure small and logical. A short game with
 meaningful choices is better than a long story where every choice leads to the same result!
+
+
+------ PLOT ------
+
+
+You wake up in a room (START) you dont know. You look around and see three doors (A, B, C), Theres also a torch. One of them is locked. You pick up the torch and enter through A. You can see thanks to the torch you picked up. You can see a chest but it's locked. You see a riddle and the solution is the key to open the chest. Inside you find a sword. Go back to START and you go through door B. Inside this room there's a monster, which you defeat using the sword you found. You find out that the monster was guarding a cell. You learn the way to defeat the AI and also get a choice (have to figure it out), you can say yes or no. Go back to START and open it. Here's the mainframe of the AI, if you said yes you defeat the AI, if you say no, you lose.
