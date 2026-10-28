@@ -28,6 +28,72 @@ const gameState = {
 
 // 3. STORY NAVIGATOR
 
+function startRoom(){
+    console.log("Entering Starting Room");
+
+    while (true) {
+        const choice = getChoice();
+        
+        if (choice == null) {
+            return null;
+        } else {
+            const destination = "0";
+            switch (choice) {
+                case "1":
+                    alert("You open the first door and cross into the next room");
+                    destination = "1";
+                    break;
+
+                case "2":
+                    alert("You open the second door and cross into the next room");
+                    destination = "2";
+                    break;
+
+                case "3":
+                    alert("You try opening the third door but it's locked");
+                    break;
+                
+                case "4":
+                    alert("You look around. The only thing in the room is a torch. Do you want to take it? y/n");
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        if (destination == "1") {
+            return "doorA";
+        } else if(destination == "2"){
+            return "doorB";
+        } else if(destination == "4"){
+            hasTorch = true;
+            return "start";
+        } else {
+            break;
+        }
+
+    }
+}
+
+function doorARoom() {
+    console.log("Entering Room A");
+
+    if (hasTorch) {
+        
+    } else {
+        alert("The room is in complete darkness. Do you want to go back? y/n")
+    }
+    
+}
+
+function doorBRoom() {
+    
+}
+
+function doorCRoom() {
+    
+}
 
 // 4. INVENTORY & LOOP MANAGER
 
