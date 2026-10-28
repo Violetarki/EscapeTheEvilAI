@@ -1,5 +1,3 @@
-alert("Hello, humans! You may have survived my Rock, Paper, Scissors challenge, "
-    +"but this time I have trapped you inside my digital fortress!")
 
 alert("INSTRUCTIONS\n"
     +"You need the Developer Console open to see the round results.\n\n"
