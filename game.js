@@ -54,7 +54,7 @@ function startRoom(){
                     break;
                 
                 case "4":
-                    alert("You look around. The only thing in the room is a torch. Do you want to take it? y/n");
+                    prompt("You look around. The only thing in the room is a torch. Do you want to take it? y/n");
                     break;
 
                 default:
@@ -76,15 +76,46 @@ function startRoom(){
     }
 }
 
+
 function doorARoom() {
     console.log("Entering Room A");
 
-    if (hasTorch) {
-        
-    } else {
-        alert("The room is in complete darkness. Do you want to go back? y/n")
+    while(true){
+        const choice = getChoice();
+
+        if (choice == null){
+            return null;
+        } else {
+            if (hasTorch) {
+                alert("You see a chest but when you try to open it, it's locked. However, it has a numeric keypad, and you notice a riddle over it");
+                alert("The riddle reads like this:\n something something");
+                const answer = prompt("You enter the solution:");
+
+                while(true){
+                    if (answer == "2") {
+                        alert("The chest opens and you find a really cool sword inside it. You pick it up");
+                        hasSword = true;
+                        break;
+
+                    } else {
+                        alert("Wrong answer. You can try again.");
+                    }
+                }
+                break;
+
+            } else {
+                alert("The room is in complete darkness. Do you want to go back? y/n");
+                break;
+            }
+        }
+
+        if (destination == "1") {
+            
+        } else {
+            
+        }
     }
-    
+
 }
 
 function doorBRoom() {
