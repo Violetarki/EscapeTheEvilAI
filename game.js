@@ -56,7 +56,7 @@ function startRoom(){
                 
                 case "4":
                     if (gameState.hasTorch) {
-                        alert("You look around but you don't see anything of note")
+                        alert("You look around but you don't see anything noteworthy")
                     } else {
                         answer = prompt("You look around. The only thing in the room is a torch. Do you want to take it? y/n");
                     }
