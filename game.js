@@ -50,7 +50,8 @@ function startRoom(){
                     break;
 
                 case "3":
-                    alert("You try opening the third door but it's locked");
+                    alert("You try opening the third door.");
+                    destination = "3";
                     break;
                 
                 case "4":
@@ -71,6 +72,14 @@ function startRoom(){
             return "doorA";
         } else if(destination == "2"){
             return "doorB";
+        }else if(destination == "3"){
+            if(gameState.hasKeyC){
+                alert("You unlock the door with the key you found.");
+                return "doorC";
+            } else{
+                alert("The door is locked.")
+                return "start";
+            } 
         } else if(destination == "4"){
             gameState.hasTorch = true;
             return "start";
@@ -127,9 +136,7 @@ function doorARoom() {
 }
 
 function doorBRoom() {
-    console.log("Entering Room A");
-
-    
+    console.log("Entering Room B");    
 
         if (choice == null){
             return null;
@@ -156,7 +163,27 @@ function doorBRoom() {
 }
 
 function doorCRoom() {
-    
+    console.log("Entering Room C");    
+
+        if (choice == null){
+            return null;
+        } else {
+            alert("Inside you finally find the supercomputer that hosts the Evil AI. You feel it looking at you intensely through the cameras.");
+            alert("The Evil AI then says: MUAHAHAHAHHAA, YOU THINK YOU CAN STOP ME NOW THAT YOU GOT HERE, BUT I HAVE ONE LAST ACE...");
+
+            if (gameState.knowsSecret) {
+                alert("However, the moment it finishes talking, it notices the kitten you rescued. It is so cute that the AI can't resist it and overloads and crashes");
+                alert("With the AI defeated, you free Branko and escape the dungeon");
+                alert("Congratulations! You win!");
+                gameState.gameEnded = true;
+                gameState.isWinner = true;
+            } else {
+                alert("You hear a hissing sound as the room starts to fill with neurotoxins. Seconds later you find yourself on the ground gasping for air.");
+                alert("You lose.");
+                gameState.gameEnded = true;
+            }
+  
+        }
 }
 
 // 4. INVENTORY & LOOP MANAGER
