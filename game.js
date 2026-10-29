@@ -54,8 +54,13 @@ function startRoom(){
                     break;
                 
                 case "4":
-                    prompt("You look around. The only thing in the room is a torch. Do you want to take it? y/n");
-                    break;
+                    if (gameState.hasTorch) {
+                        alert("You look around but you don't see anything of note")
+                    } else {
+                        answer = prompt("You look around. The only thing in the room is a torch. Do you want to take it? y/n");
+                    }
+                    destination = "4";
+                    continue;
 
                 default:
                     break;
@@ -67,10 +72,11 @@ function startRoom(){
         } else if(destination == "2"){
             return "doorB";
         } else if(destination == "4"){
-            hasTorch = true;
+            gameState.hasTorch = true;
             return "start";
         } else {
-            break;
+            alert("That is not a valid choice.")
+            return "start";
         }
 
     }
@@ -86,7 +92,7 @@ function doorARoom() {
         if (choice == null){
             return null;
         } else {
-            if (hasTorch) {
+            if (gameState.hasTorch) {
                 alert("You see a chest but when you try to open it, it's locked. However, it has a numeric keypad, and you notice a riddle over it");
                 alert("The riddle reads like this:\n something something");
                 const answer = prompt("You enter the solution:");
@@ -94,32 +100,59 @@ function doorARoom() {
                 while(true){
                     if (answer == "2") {
                         alert("The chest opens and you find a really cool sword inside it. You pick it up");
-                        hasSword = true;
+                        gameState.hasSword = true;
+                        destination = "1";
                         break;
 
                     } else {
                         alert("Wrong answer. You can try again.");
                     }
                 }
-                break;
 
             } else {
-                alert("The room is in complete darkness. Do you want to go back? y/n");
-                break;
+                answer = prompt("The room is in complete darkness. Do you want to go back? y/n");
+                if (answer == "y") {
+                    destination = "1";
+                } else {
+                    alert("Because it was too dark to see, you trip with a chest shaped object and die. You lose.")
+                    gameState.gameEnded = true;
+                    break;
+                }
             }
         }
 
-        if (destination == "1") {
-            
-        } else {
-            
-        }
+        return "start";
     }
 
 }
 
 function doorBRoom() {
+    console.log("Entering Room A");
+
     
+
+        if (choice == null){
+            return null;
+        } else {
+            alert("You see a creature in the room but it hasn't seen you yet. It doesn't look very friendly. It seems to be guarding a cage and there's something shiny on top of it.");
+            const answer = prompt("Do you want to try to sneak around it? y/n");
+
+            if (answer == "y") {
+                if (gameState.hasSword) {
+                    alert("The monster notices you. You fight it using the sword you found and defeat it.");
+                    alert("Now you can see clearly what the creature was guarding. Inside the cage there's a kitten and the shiny item was what seems to be the key to door C");
+                    answer = prompt("You pick up the key. Do you want to free the kitten and take it with you? y/n");
+                    if (answer == "y") {
+                        gameState.knowsSecret = true;   
+                    }
+                } else {
+                    alert("You try to sneak around but the monster notices you. Since you don't have anything to defense yourself, it kills your. You lose.")
+                    gameState.gameEnded = true;
+                }   
+            }           
+        }
+
+        return "start";
 }
 
 function doorCRoom() {
