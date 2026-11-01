@@ -1,249 +1,164 @@
-// INTRO & INSTRUCTIONS
+﻿"use strict";
 
-alert("Hello, humans! You may have survived my Rock, Paper, Scissors challenge, "
-    + "but this time I have trapped you inside my digital fortress!");
+// Story paths (planned before implementation):
+// Hub -> Archive: torch + riddle -> sword -> Hub.
+// Hub -> Guard: sword -> key + optional kitten -> Hub.
+// Hub -> Mainframe: key required; kitten -> escape, alone -> capture.
+// Exploring darkness or fighting unarmed also leads to capture.
 
-alert("INSTRUCTIONS\n\n"
-    + "Open your Browser Console for the full battle log:\n\n"
-    + "• Chrome / Edge / Opera / Brave (Windows): F12 or Ctrl + Shift + I\n"
-    + "• Chrome / Edge / Opera / Brave (Mac): Cmd + Option + I\n"
-    + "• Firefox (Windows): Ctrl + Shift + K\n"
-    + "• Firefox (Mac): Cmd + Option + K\n"
-    + "• Safari (Mac): Enable the Develop menu in Settings > Advanced, then press Cmd + Option + C\n\n"
-    + "Click 'OK' once your console is open to begin!");
+function createState() {
+    return { room: "hub", torch: false, sword: false, key: false,
+        kitten: false, guardDefeated: false, ending: null };
+}
 
-
-// 1. SHARED STATE (Tracks the game's memory)
-const gameState = {
-    currentRoom: "start",
-    hasTorch: false,
-    hasSword: false,
-    hasKeyC: false,     
-    knowsSecret: false, 
-    gameEnded: false,
-    isWinner: false
-};
-
-// 2. VALIDATION 
-
-// 3. STORY NAVIGATOR
-
-function startRoom(){
-    console.log("Entering Starting Room");
-
+function getChoice(state, message, options) {
     while (true) {
-        const choice = getChoice();
-        
-        if (choice == null) {
+        const input = prompt(message + "\n\nCancel ends the adventure.");
+        if (input === null) {
+            finish(state, "cancelled", "Adventure ended safely. Thanks for playing!");
             return null;
-        } else {
-            const destination = "0";
-            switch (choice) {
-                case "1":
-                    alert("You open the first door and cross into the next room");
-                    destination = "1";
-                    break;
-
-                case "2":
-                    alert("You open the second door and cross into the next room");
-                    destination = "2";
-                    break;
-
-                case "3":
-                    alert("You try opening the third door.");
-                    destination = "3";
-                    break;
-                
-                case "4":
-                    if (gameState.hasTorch) {
-                        alert("You look around but you don't see anything noteworthy")
-                    } else {
-                        answer = prompt("You look around. The only thing in the room is a torch. Do you want to take it? y/n");
-                    }
-                    destination = "4";
-                    continue;
-
-                default:
-                    break;
-            }
         }
-
-        if (destination == "1") {
-            return "doorA";
-        } else if(destination == "2"){
-            return "doorB";
-        }else if(destination == "3"){
-            if(gameState.hasKeyC){
-                alert("You unlock the door with the key you found.");
-                return "doorC";
-            } else{
-                alert("The door is locked.")
-                return "start";
-            } 
-        } else if(destination == "4"){
-            gameState.hasTorch = true;
-            return "start";
-        } else {
-            alert("That is not a valid choice.")
-            return "start";
-        }
-
+        const choice = input.trim().toLowerCase();
+        if (options.includes(choice)) return choice;
+        alert("Please enter one of the listed choices. Your progress has not changed.");
     }
 }
 
+function finish(state, ending, message) {
+    state.ending = ending;
+    alert(message);
+    console.log("Result: " + ending);
+}
 
-function doorARoom() {
-    console.log("Entering Room A");
-
-    while(true){
-        const choice = getChoice();
-
-        if (choice == null){
-            return null;
-        } else {
-            if (gameState.hasTorch) {
-                alert("You see a chest but when you try to open it, it's locked. However, it has a numeric keypad, and you notice a riddle over it");
-                alert("The riddle reads like this:\n something something");
-                const answer = prompt("You enter the solution:");
-
-                while(true){
-                    if (answer == "2") {
-                        alert("The chest opens and you find a really cool sword inside it. You pick it up");
-                        gameState.hasSword = true;
-                        destination = "1";
-                        break;
-
-                    } else {
-                        alert("Wrong answer. You can try again.");
-                    }
-                }
-
-            } else {
-                answer = prompt("The room is in complete darkness. Do you want to go back? y/n");
-                if (answer == "y") {
-                    destination = "1";
-                } else {
-                    alert("Because it was too dark to see, you trip with a chest shaped object and die. You lose.")
-                    gameState.gameEnded = true;
-                    break;
-                }
-            }
-        }
-
-        return "start";
+function hub(state) {
+    const choice = getChoice(state,
+        "HUB: Three doors surround you.\n"
+        + "1 / archive: Enter door A, the archive.\n"
+        + "2 / guard: Enter door B, the guard room.\n"
+        + "3 / mainframe: Try door C, the locked mainframe.\n"
+        + "4 / torch: " + (state.torch ? "Inspect the empty torch stand." : "Take the torch."),
+        ["1", "archive", "2", "guard", "3", "mainframe", "4", "torch"]);
+    if (choice === null) return;
+    if (["1", "archive"].includes(choice)) state.room = "archive";
+    else if (["2", "guard"].includes(choice)) state.room = "guard";
+    else if (["3", "mainframe"].includes(choice)) {
+        if (state.key) state.room = "mainframe";
+        else alert("Door C is locked. A sign reads: KEY HELD BY SECURITY, DOOR B.");
+    } else if (state.torch) alert("The stand is empty. You already carry the torch.");
+    else {
+        state.torch = true;
+        alert("You take the torch. You can now explore dark rooms safely.");
     }
-
 }
 
-function doorBRoom() {
-    console.log("Entering Room B");    
-
-        if (choice == null){
-            return null;
-        } else {
-            alert("You see a creature in the room but it hasn't seen you yet. It doesn't look very friendly. It seems to be guarding a cage and there's something shiny on top of it.");
-            const answer = prompt("Do you want to try to sneak around it? y/n");
-
-            if (answer == "y") {
-                if (gameState.hasSword) {
-                    alert("The monster notices you. You fight it using the sword you found and defeat it.");
-                    alert("Now you can see clearly what the creature was guarding. Inside the cage there's a kitten and the shiny item was what seems to be the key to door C");
-                    answer = prompt("You pick up the key. Do you want to free the kitten and take it with you? y/n");
-                    if (answer == "y") {
-                        gameState.knowsSecret = true;   
-                    }
-                } else {
-                    alert("You try to sneak around but the monster notices you. Since you don't have anything to defense yourself, it kills your. You lose.")
-                    gameState.gameEnded = true;
-                }   
-            }           
+function archive(state) {
+    if (!state.torch) {
+        const choice = getChoice(state,
+            "ARCHIVE: It is pitch black. A deep pit hums ahead.\n"
+            + "1 / back: Return to the hub for a light.\n"
+            + "2 / explore: Walk into the darkness (dangerous).",
+            ["1", "back", "2", "explore"]);
+        if (choice === null) return;
+        if (["1", "back"].includes(choice)) state.room = "hub";
+        else finish(state, "lost", "You fall into a data pit. The AI captures you. Game over!");
+        return;
+    }
+    const choice = getChoice(state,
+        "ARCHIVE: Your torch reveals " + (state.sword ? "an empty, open chest." : "a chest with a numeric keypad.")
+        + "\n1 / chest: Inspect the chest.\n2 / back: Return to the hub.",
+        ["1", "chest", "2", "back"]);
+    if (choice === null) return;
+    if (["2", "back"].includes(choice)) state.room = "hub";
+    else if (state.sword) alert("The chest is empty. You already collected its sword.");
+    else {
+        // The answer is checked separately so any incorrect answer permits another try.
+        const answer = prompt("CHEST RIDDLE: I am an even prime number. What number am I?\n"
+            + "Enter your answer, or type back to leave the keypad. Cancel ends the adventure.");
+        if (answer === null) {
+            finish(state, "cancelled", "Adventure ended safely. Thanks for playing!");
+            return;
         }
-
-        return "start";
+        const normalized = answer.trim().toLowerCase();
+        if (normalized === "back") return;
+        if (normalized === "2" || normalized === "two") {
+            state.sword = true;
+            alert("Correct! The chest opens. You collect a plasma sword, strong enough to defeat the security guard.");
+        } else alert("The chest stays locked. Inspect it again to retry, or return to the hub. Your progress has not changed.");
+    }
 }
 
-function doorCRoom() {
-    console.log("Entering Room C");    
-
-        if (choice == null){
-            return null;
-        } else {
-            alert("Inside you finally find the supercomputer that hosts the Evil AI. You feel it looking at you intensely through the cameras.");
-            alert("The Evil AI then says: MUAHAHAHAHHAA, YOU THINK YOU CAN STOP ME NOW THAT YOU GOT HERE, BUT I HAVE ONE LAST ACE...");
-
-            if (gameState.knowsSecret) {
-                alert("However, the moment it finishes talking, it notices the kitten you rescued. It is so cute that the AI can't resist it and overloads and crashes");
-                alert("With the AI defeated, you free Branko and escape the dungeon");
-                alert("Congratulations! You win!");
-                gameState.gameEnded = true;
-                gameState.isWinner = true;
-            } else {
-                alert("You hear a hissing sound as the room starts to fill with neurotoxins. Seconds later you find yourself on the ground gasping for air.");
-                alert("You lose.");
-                gameState.gameEnded = true;
-            }
-  
+function guardRoom(state) {
+    if (!state.guardDefeated) {
+        const choice = getChoice(state,
+            "GUARD ROOM: A monster guards a key and a caged kitten.\n"
+            + "A sign reads: AI WEAKNESS: CUTE ANIMALS CAUSE SYSTEM OVERLOAD.\n"
+            + "1 / fight: Challenge the guard " + (state.sword ? "with your sword." : "unarmed (dangerous).")
+            + "\n2 / back: Return to the hub.", ["1", "fight", "2", "back"]);
+        if (choice === null) return;
+        if (["2", "back"].includes(choice)) {
+            state.room = "hub";
+            return;
         }
+        if (!state.sword) {
+            finish(state, "lost", "Without a weapon, you cannot defeat the guard. It captures you. Game over!");
+            return;
+        }
+        state.guardDefeated = true;
+        state.key = true;
+        alert("Your sword disables the guard. You collect the key to door C. The kitten's cage is now unlocked.");
+    }
+    const choice = getChoice(state,
+        "GUARD ROOM: The defeated guard stays motionless. You have the mainframe key.\n"
+        + "The sign reads: AI WEAKNESS: CUTE ANIMALS CAUSE SYSTEM OVERLOAD.\n"
+        + "1 / kitten: " + (state.kitten ? "Check on your rescued kitten." : "Rescue the kitten.")
+        + "\n2 / back: Return to the hub.", ["1", "kitten", "2", "back"]);
+    if (choice === null) return;
+    if (["2", "back"].includes(choice)) state.room = "hub";
+    else if (state.kitten) alert("The kitten purrs on your shoulder. Its cage is empty.");
+    else {
+        state.kitten = true;
+        alert("You rescue the kitten. It climbs onto your shoulder. Remember the AI's weakness!");
+    }
 }
 
-// 4. INVENTORY & LOOP MANAGER
+function mainframe(state) {
+    const choice = getChoice(state,
+        "MAINFRAME: Your key opens door C. The AI watches you.\n"
+        + "1 / confront: Confront the AI (you need its weakness to survive).\n"
+        + "2 / back: Return to the hub to prepare.", ["1", "confront", "2", "back"]);
+    if (choice === null) return;
+    if (["2", "back"].includes(choice)) state.room = "hub";
+    else if (state.kitten) finish(state, "escaped",
+        "The kitten meows. The AI overloads from cuteness and crashes!\n"
+        + "You free Branko and escape the digital fortress together. You win!");
+    else finish(state, "lost", "Your sword cannot harm software. The AI seals the room and captures you. Game over!\n"
+        + "Perhaps the guard room's clue could help next time.");
+}
 
 function game() {
-    let playing = true; 
-
+    alert("ESCAPE THE EVIL AI!\n\nThe AI has trapped you in its digital fortress. Explore, collect useful items, and find its weakness to escape with Branko.");
+    alert("HOW TO PLAY\n\nType a listed number or word. Spaces and capitalization do not matter. Cancel in any prompt ends the adventure.\n\n"
+        + "The console provides an optional location and inventory log. All essential information also appears in dialogs.\n"
+        + "Chrome/Edge (Windows): Ctrl+Shift+J; Mac: Cmd+Option+J.\n"
+        + "Firefox (Windows): Ctrl+Shift+K; Mac: Cmd+Option+K.\n\n"
+        + "You can play without opening the console.");
+    let playing = true;
     while (playing) {
-        
-        // Reset state for new games
-        gameState.currentRoom = "start";
-        gameState.hasTorch = false;
-        gameState.hasSword = false;
-        gameState.hasKeyC = false;
-        gameState.knowsSecret = false;
-        gameState.gameEnded = false;
-        gameState.isWinner = false;
-
-        while (!gameState.gameEnded) {
-            let nextRoom = null;
-            console.log(`[System]: Entering ${gameState.currentRoom}`);
-
-            switch (gameState.currentRoom) {
-                case "start": nextRoom = startRoom(); break;
-                case "doorA": nextRoom = doorARoom(); break;
-                case "doorB": nextRoom = doorBRoom(); break;
-                case "doorC": nextRoom = doorCRoom(); break;
-                default: 
-                    console.error("Unknown room."); 
-                    gameState.gameEnded = true; 
-                    break;
-            }
-
-            if (nextRoom === null) {
-                gameState.gameEnded = true;
-            } else {
-                gameState.currentRoom = nextRoom;
+        const state = createState();
+        console.log("--- New adventure: all progress reset ---");
+        while (state.ending === null) {
+            const inventory = ["torch", "sword", "key", "kitten"].filter(item => state[item]);
+            console.log("Location: " + state.room + " | Inventory: " + (inventory.join(", ") || "empty"));
+            switch (state.room) {
+                case "hub": hub(state); break;
+                case "archive": archive(state); break;
+                case "guard": guardRoom(state); break;
+                case "mainframe": mainframe(state); break;
             }
         }
-
-        // ENDINGS & RESTART LOGIC 
-        if (gameState.currentRoom === "doorC") { 
-            if (gameState.isWinner) {
-                alert("Congratulations! You defeated the Evil AI and escaped the digital fortress!");
-                console.log("Result: Player Escaped");
-            } else {
-                alert("Game Over! You didn't know the secret. The Evil AI has deleted you from the system.");
-                console.log("Result: Player Deleted");
-            }
-        }
-
-        playing = confirm("Do you dare to try again? Click OK to restart and lose all your items, or Cancel to accept your fate.");
+        playing = confirm("Play again? OK starts a new adventure with all progress reset. Cancel finishes playing.");
     }
-
     console.log("Thank you for playing!");
 }
 
 game();
-
-
-    
-
-    
